@@ -3,9 +3,17 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from core.dynamic_array import DynamicArray
 from core.arithmetic import decimal_a_base_b, base_b_a_decimal, suma_digitos_base_b
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 #Request Model
 class OperationRequest(BaseModel):
     u: int

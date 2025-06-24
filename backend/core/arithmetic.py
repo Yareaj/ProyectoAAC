@@ -86,6 +86,8 @@ def suma_digitos_base_b(u, v, b):
 
     return {
         "steps": steps,
+        "u_string": u_string,
+        "v_string": v_string,
         "result_digits": result_final,
         "result_string": w_string,
         "result_decimal": w_base10,
