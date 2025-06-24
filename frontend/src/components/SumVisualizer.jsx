@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { motion, AnimatePresence } from "framer-motion"
 
 export default function SumVisualizer() {
   const [u, setU] = useState("")
@@ -38,7 +39,9 @@ export default function SumVisualizer() {
   return (
     <div className="min-h-screen bg-gray-900 text-white px-6 py-10">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-bold text-center mb-8">Base-B Step-by-Step Addition</h1>
+        <h1 className="text-4xl font-bold text-center mb-8">
+          Base-B Step-by-Step Addition
+        </h1>
 
         {/* Form */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
@@ -46,21 +49,21 @@ export default function SumVisualizer() {
             type="number"
             className="bg-gray-800 border border-gray-600 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             value={u}
-            onChange={e => setU(e.target.value)}
+            onChange={(e) => setU(e.target.value)}
             placeholder="Number u (decimal)"
           />
           <input
             type="number"
             className="bg-gray-800 border border-gray-600 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             value={v}
-            onChange={e => setV(e.target.value)}
+            onChange={(e) => setV(e.target.value)}
             placeholder="Number v (decimal)"
           />
           <input
             type="number"
             className="bg-gray-800 border border-gray-600 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             value={base}
-            onChange={e => setBase(e.target.value)}
+            onChange={(e) => setBase(e.target.value)}
             placeholder="Base"
           />
         </div>
@@ -76,23 +79,48 @@ export default function SumVisualizer() {
 
         {/* Result Display */}
         {data && (
-          <div className="bg-gray-800 p-6 rounded-xl shadow-md space-y-6">
+          <motion.div
+            className="bg-gray-800 p-6 rounded-xl shadow-md space-y-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+          >
             <div className="text-center text-lg font-semibold text-blue-300">
               Base: {data.base}
             </div>
 
             <div className="space-y-4">
-              <ArrayDisplay label="u" array={data.u_digits} highlight={currentStep} />
-              <ArrayDisplay label="v" array={data.v_digits} highlight={currentStep} />
               <ArrayDisplay
-                label="result"
-                array={data.steps[currentStep].result}
+                label="u"
+                array={data.u_digits}
                 highlight={currentStep}
               />
+              <ArrayDisplay
+                label="v"
+                array={data.v_digits}
+                highlight={currentStep}
+              />
+
+              {/* Show current result */}
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentStep}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <ArrayDisplay
+                    label="partial sum"
+                    array={data.steps[currentStep].result}
+                    highlight={currentStep}
+                  />
+                </motion.div>
+              </AnimatePresence>
             </div>
 
             <p className="mt-4 text-center text-yellow-400 italic text-lg">
-              {data.steps[currentStep].summary}
+              {data.steps[currentStep].Resumen || data.steps[currentStep].summary}
             </p>
 
             <div className="flex justify-center space-x-4 mt-6">
@@ -111,30 +139,57 @@ export default function SumVisualizer() {
                 Next →
               </button>
             </div>
-          </div>
+
+            {/* Final Summary */}
+            <div className="mt-8 border-t border-gray-600 pt-6 space-y-4 text-sm text-gray-300">
+              <div className="font-semibold text-base text-blue-400">
+                Final Result
+              </div>
+              <div>
+                <strong>u (base {data.base}):</strong> {data.u_string}
+              </div>
+              <div>
+                <strong>v (base {data.base}):</strong> {data.v_string}
+              </div>
+              <div>
+                <strong>result (base {data.base}):</strong> {data.result_string}
+              </div>
+              <div>
+                <strong>result (decimal):</strong> {data.result_decimal}
+              </div>
+
+              <ArrayDisplay label="Final Digits" array={data.result_digits} />
+            </div>
+          </motion.div>
         )}
       </div>
     </div>
   )
 }
 
-// 🧩 Subcomponent for Array Display
+// 🔢 Subcomponent with reversed array and optional highlighting
 function ArrayDisplay({ label, array, highlight }) {
+  const reversedArray = [...array].reverse()
+
   return (
     <div className="flex items-center space-x-2 justify-center">
       <span className="font-mono text-sm text-gray-400">{label}:</span>
-      {array.map((val, idx) => (
-        <span
-          key={idx}
-          className={`w-10 h-10 flex items-center justify-center rounded text-lg font-mono border ${
-            highlight === idx
-              ? "bg-green-600 text-white border-green-400"
-              : "bg-gray-700 border-gray-600"
-          }`}
-        >
-          {val === null ? "" : val}
-        </span>
-      ))}
+      {reversedArray.map((val, idx) => {
+        const realIndex = array.length - 1 - idx
+        return (
+          <motion.span
+            key={idx}
+            layout
+            className={`w-10 h-10 flex items-center justify-center rounded text-lg font-mono border transition-all duration-300 ${
+              highlight === realIndex
+                ? "bg-green-600 text-white border-green-400 scale-110"
+                : "bg-gray-700 border-gray-600"
+            }`}
+          >
+            {val === null ? "" : val}
+          </motion.span>
+        )
+      })}
     </div>
   )
 }
