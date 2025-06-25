@@ -181,3 +181,83 @@ def resta_digitos_base_b(u, v, b):
         "swapped": swapped
     }
 
+def multiplicacion_digitos_base_b(u, v, b):
+    u_digitos, u_string, n = decimal_a_base_b(u, b)
+    v_digitos, v_string, m = decimal_a_base_b(v, b)
+
+    # Crear resultado w con n + m ceros
+    w = DynamicArray()
+    for _ in range(n + m):
+        w.push(0)
+
+    steps = []
+
+    for i in range(m):  # Por cada dígito de v
+        v_digit = v_digitos.get(i)
+        if v_digit != 0:
+            k = 0  # Acarreo inicial
+            for j in range(n):  # Por cada dígito de u
+                u_digit = u_digitos.get(j)
+                prev = w.get(j + i)
+                producto = u_digit * v_digit
+                total = producto + prev + k
+                new_digit = total % b
+                k = total // b
+                w.set(j + i, new_digit)
+
+                # Snapshot del resultado parcial
+                snapshot = [w.get(k_idx) for k_idx in range(len(w))]
+
+                steps.append({
+                    "i": i,
+                    "j": j,
+                    "u_digit": u_digit,
+                    "v_digit": v_digit,
+                    "carry_in": k,
+                    "partial": prev,
+                    "product": producto,
+                    "sum": total,
+                    "digit_result": new_digit,
+                    "carry_out": k,
+                    "result": snapshot.copy(),
+                    "Resumen": f"u[{j}]={u_digit} × v[{i}]={v_digit} + {prev} + acarreo = {total} → {new_digit} (Acarreo {k})"
+                })
+
+            # Acarreo final para la columna
+            if k > 0:
+                prev = w.get(i + n)
+                w.set(i + n, k)
+                final_snapshot = [w.get(k_idx) for k_idx in range(len(w))]
+                steps.append({
+                    "i": i,
+                    "j": None,
+                    "u_digit": None,
+                    "v_digit": v_digit,
+                    "carry_in": k,
+                    "partial": prev,
+                    "product": None,
+                    "sum": None,
+                    "digit_result": None,
+                    "carry_out": k,
+                    "result": final_snapshot.copy(),
+                    "Resumen": f"Acarreo final para v[{i}]={v_digit}: {k}"
+                })
+
+    result_digits = [w.get(i) for i in range(len(w))]
+    w_string = "".join(str(w.get(i)) for i in reversed(range(len(w))))
+    w_base10 = base_b_a_decimal(w, b)
+
+    return {
+        "steps": steps,
+        "u_string": u_string,
+        "v_string": v_string,
+        "result_digits": result_digits,
+        "result_string": w_string,
+        "result_decimal": w_base10,
+        "u_digits": [u_digitos.get(i) for i in range(len(u_digitos))],
+        "v_digits": [v_digitos.get(i) for i in range(len(v_digitos))],
+        "base": b
+    }
+
+
+
