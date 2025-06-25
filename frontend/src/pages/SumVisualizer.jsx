@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { motion } from "framer-motion"
-import Layout from "../components/Layout" // 👈 Asegúrate de importar Layout
+import Layout from "../components/Layout"
 
 export default function SumVisualizer() {
   const [u, setU] = useState("")
@@ -39,9 +39,11 @@ export default function SumVisualizer() {
 
   return (
     <Layout>
-      <div className="min-h-screen text-white px-6 py-10">
+      <div className="text-white px-6 py-10">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-4xl font-bold text-center mb-8">Suma paso a paso en base <span className="text-blue-400">{base}</span></h1>
+          <h1 className="text-4xl font-bold text-center mb-8">
+            Suma paso a paso en base <span className="text-blue-400">{base}</span>
+          </h1>
 
           {/* Formulario */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
