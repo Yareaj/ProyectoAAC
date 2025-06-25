@@ -2,7 +2,7 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 from core.dynamic_array import DynamicArray
-from core.arithmetic import decimal_a_base_b, base_b_a_decimal, suma_digitos_base_b
+from core.arithmetic import decimal_a_base_b, base_b_a_decimal, suma_digitos_base_b, resta_digitos_base_b
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
@@ -47,4 +47,9 @@ def base_to_decimal(base: int):
 @app.post("/suma")
 def suma(data: OperationRequest):
     result = suma_digitos_base_b(data.u, data.v, data.base)
+    return result
+
+@app.post("/resta")
+def resta(data: OperationRequest):
+    result = resta_digitos_base_b(data.u, data.v, data.base)
     return result

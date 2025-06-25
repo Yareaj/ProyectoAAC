@@ -95,3 +95,89 @@ def suma_digitos_base_b(u, v, b):
         "v_digits": [v_digitos.get(i) for i in range(len(v_digitos))],
         "base": b
     }
+
+
+def resta_digitos_base_b(u, v, b):
+    # Asegura que u >= v
+    swapped = False
+    if u < v:
+        u, v = v, u
+        swapped = True
+
+    u_digitos, u_string, n = decimal_a_base_b(u, b)
+    v_digitos, v_string, m = decimal_a_base_b(v, b)
+
+    # Igualar longitud
+    if n > m:
+        for _ in range(n - m):
+            v_digitos.push(0)
+    elif m > n:
+        for _ in range(m - n):
+            u_digitos.push(0)
+
+    max_len = max(n, m)
+    k = 0  # préstamo
+    w = DynamicArray()
+    steps = []
+
+    for i in range(max_len):
+        a = u_digitos.get(i)
+        b_ = v_digitos.get(i)
+        s = a - b_ + k
+
+        if s < 0:
+            digit = s + b
+            k = -1
+        else:
+            digit = s
+            k = 0
+
+        w.push(digit)
+
+        # Resultado parcial con None
+        result_partial = [w.get(j) for j in range(len(w))] + [None] * (max_len + 1 - len(w))
+
+        steps.append({
+            "index": i,
+            "highlight": i,
+            "borrow_in": k if s < 0 else 0,
+            "borrow_out": k,
+            "u_digit": a,
+            "v_digit": b_,
+            "diff": s,
+            "digit_result": digit,
+            "result": result_partial,
+            "Resumen": f"{a} - {b_} + {k if s < 0 else 0} = {s} → {digit} (Préstamo {k})"
+        })
+
+    # Resultado final
+    result_final = [w.get(i) for i in range(len(w))]
+    w_string = "".join(str(w.get(i)) for i in reversed(range(len(w))))
+    w_base10 = base_b_a_decimal(w, b)
+
+    steps.append({
+        "index": max_len,
+        "highlight": max_len,
+        "borrow_in": k,
+        "borrow_out": 0,
+        "u_digit": 0,
+        "v_digit": 0,
+        "diff": 0,
+        "digit_result": 0,
+        "result": result_final,
+        "summary": f"Préstamo final: {k}"
+    })
+
+    return {
+        "steps": steps,
+        "u_string": u_string,
+        "v_string": v_string,
+        "result_digits": result_final,
+        "result_string": w_string,
+        "result_decimal": w_base10,
+        "u_digits": [u_digitos.get(i) for i in range(len(u_digitos))],
+        "v_digits": [v_digitos.get(i) for i in range(len(v_digitos))],
+        "base": b,
+        "swapped": swapped
+    }
+
