@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { motion } from "framer-motion"
+import Layout from "../components/Layout" // 👈 Asegúrate de importar Layout
 
 export default function SumVisualizer() {
   const [u, setU] = useState("")
@@ -37,61 +38,59 @@ export default function SumVisualizer() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white px-6 py-10">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-bold text-center mb-8">Base-B Step-by-Step Addition</h1>
+    <Layout>
+      <div className="min-h-screen text-white px-6 py-10">
+        <div className="max-w-4xl mx-auto">
+          <h1 className="text-4xl font-bold text-center mb-8">Suma paso a paso en base <span className="text-blue-400">{base}</span></h1>
 
-        {/* Formulario */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-          <input type="number" value={u} onChange={e => setU(e.target.value)} placeholder="u (decimal)"
-            className="bg-gray-800 border border-gray-600 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
-          <input type="number" value={v} onChange={e => setV(e.target.value)} placeholder="v (decimal)"
-            className="bg-gray-800 border border-gray-600 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
-          <input type="number" value={base} onChange={e => setBase(e.target.value)} placeholder="Base"
-            className="bg-gray-800 border border-gray-600 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
-        </div>
-
-        <div className="text-center mb-6">
-          <button onClick={fetchSteps}
-            className="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded text-white font-semibold transition-all">
-            Calculate
-          </button>
-        </div>
-
-        {data && (
-          <div className="bg-gray-800 p-6 rounded-xl shadow-md space-y-6">
-            <div className="text-center text-lg font-semibold text-blue-300">Base: {data.base}</div>
-
-            {/* Visualización del acarreo */}
-            <ArrayDisplay label="carry" array={data.steps.map(s => s.carry_in)} highlight={currentStep} />
-
-            {/* Visualización u, v y resultado */}
-            <ArrayDisplay label="u" array={data.u_digits} highlight={currentStep} />
-            <ArrayDisplay label="v" array={data.v_digits} highlight={currentStep} />
-            <ArrayDisplay label="result" array={data.steps[currentStep].result} highlight={currentStep} />
-
-            <p className="mt-4 text-center text-yellow-400 italic text-lg">
-              {data.steps[currentStep].Resumen || data.steps[currentStep].summary}
-            </p>
-
-            <div className="flex justify-center space-x-4 mt-6">
-              <button onClick={prevStep} disabled={currentStep === 0}
-                className="bg-gray-600 hover:bg-gray-500 px-4 py-1 rounded disabled:opacity-40">← Previous</button>
-              <button onClick={nextStep} disabled={currentStep === data.steps.length - 1}
-                className="bg-gray-600 hover:bg-gray-500 px-4 py-1 rounded disabled:opacity-40">Next →</button>
-            </div>
-
-            {/* Representaciones finales */}
-            <div className="mt-6 space-y-2 text-center text-sm text-gray-300">
-              <p><strong>u (base {data.base}):</strong> {data.u_string}</p>
-              <p><strong>v (base {data.base}):</strong> {data.v_string}</p>
-              <p><strong>Resultado (base {data.base}):</strong> {data.result_string}</p>
-              <p><strong>Resultado en base 10:</strong> {data.result_decimal}</p>
-            </div>
+          {/* Formulario */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+            <input type="number" value={u} onChange={e => setU(e.target.value)} placeholder="u (decimal)"
+              className="bg-gray-800 border border-gray-600 rounded px-4 py-2" />
+            <input type="number" value={v} onChange={e => setV(e.target.value)} placeholder="v (decimal)"
+              className="bg-gray-800 border border-gray-600 rounded px-4 py-2" />
+            <input type="number" value={base} onChange={e => setBase(e.target.value)} placeholder="Base"
+              className="bg-gray-800 border border-gray-600 rounded px-4 py-2" />
           </div>
-        )}
+
+          <div className="text-center mb-6">
+            <button onClick={fetchSteps}
+              className="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded text-white font-semibold transition-all">
+              Calcular
+            </button>
+          </div>
+
+          {data && (
+            <div className="bg-gray-800 p-6 rounded-xl shadow-md space-y-6">
+              <div className="text-center text-lg font-semibold text-blue-300">Base: {data.base}</div>
+
+              <ArrayDisplay label="carry" array={data.steps.map(s => s.carry_in)} highlight={currentStep} />
+              <ArrayDisplay label="u" array={data.u_digits} highlight={currentStep} />
+              <ArrayDisplay label="v" array={data.v_digits} highlight={currentStep} />
+              <ArrayDisplay label="result" array={data.steps[currentStep].result} highlight={currentStep} />
+
+              <p className="mt-4 text-center text-yellow-400 italic text-lg">
+                {data.steps[currentStep].Resumen || data.steps[currentStep].summary}
+              </p>
+
+              <div className="flex justify-center space-x-4 mt-6">
+                <button onClick={prevStep} disabled={currentStep === 0}
+                  className="bg-gray-600 hover:bg-gray-500 px-4 py-1 rounded disabled:opacity-40">← Anterior</button>
+                <button onClick={nextStep} disabled={currentStep === data.steps.length - 1}
+                  className="bg-gray-600 hover:bg-gray-500 px-4 py-1 rounded disabled:opacity-40">Siguiente →</button>
+              </div>
+
+              <div className="mt-6 space-y-2 text-center text-sm text-gray-300">
+                <p><strong>u (base {data.base}):</strong> {data.u_string}</p>
+                <p><strong>v (base {data.base}):</strong> {data.v_string}</p>
+                <p><strong>Resultado (base {data.base}):</strong> {data.result_string}</p>
+                <p><strong>Resultado en base 10:</strong> {data.result_decimal}</p>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </Layout>
   )
 }
 
@@ -120,6 +119,3 @@ function ArrayDisplay({ label, array, highlight }) {
     </div>
   )
 }
-
-
-
