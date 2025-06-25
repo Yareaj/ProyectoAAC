@@ -1,20 +1,28 @@
-# backend/main.py
 from fastapi import FastAPI
-from pydantic import BaseModel
-from core.dynamic_array import DynamicArray
-from core.arithmetic import decimal_a_base_b, base_b_a_decimal,suma_digitos_base_b, resta_digitos_base_b, multiplicacion_digitos_base_b
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+
+# Import the core modules from local directory
+from core.dynamic_array import DynamicArray
+from core.arithmetic import (
+    decimal_a_base_b, 
+    base_b_a_decimal,
+    suma_digitos_base_b, 
+    resta_digitos_base_b, 
+    multiplicacion_digitos_base_b
+)
 
 app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins for deployment, you can restrict this later
+    allow_origins=["*"],  # Allow all origins for deployment
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
-#Request Model
+
+# Request Model
 class OperationRequest(BaseModel):
     u: int
     v: int
@@ -58,3 +66,6 @@ def resta(data: OperationRequest):
 def multiplicacion(data: OperationRequest):
     result = multiplicacion_digitos_base_b(data.u, data.v, data.base)
     return result
+
+# This is the entry point for Vercel
+handler = app

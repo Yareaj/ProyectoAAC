@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { motion } from "framer-motion"
 import Layout from "../components/Layout"
+import { API_BASE_URL } from "../config/api"
 
 export default function MultiplicationVisualizer() {
   const [u, setU] = useState("")
@@ -12,7 +13,7 @@ export default function MultiplicationVisualizer() {
   const fetchSteps = async () => {
     try {
       const payload = { u: Number(u), v: Number(v), base: Number(base) }
-      const res = await fetch("http://localhost:8000/multiplicacion", {
+      const res = await fetch(`${API_BASE_URL}/multiplicacion`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
